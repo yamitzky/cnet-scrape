@@ -1,6 +1,8 @@
 require "uri"
 require "digest"
 require "fileutils"
+require "open-uri"
+require "resque"
 load File.expand_path "../extract_page.rb", __FILE__
 
 class FetchPage
