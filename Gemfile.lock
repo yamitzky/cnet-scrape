@@ -12,7 +12,7 @@ GEM
     redis (3.0.6)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
-    resque (1.25.1)
+    resque (1.26.pre.0)
       mono_logger (~> 1.0)
       multi_json (~> 1.0)
       redis-namespace (~> 1.2)
@@ -32,5 +32,5 @@ PLATFORMS
 
 DEPENDENCIES
   nokogiri
-  resque (~> 1)
+  resque (~> 1.26.pre.0)
   sqlite3
