@@ -3,7 +3,7 @@ require "nokogiri"
 require "sqlite3"
 
 class ExtractPage
-  @queue = :cnet
+  @queue = :cnet_extract
   def self.perform(url)
     url_hash = Digest::SHA256.hexdigest url.to_s
 
