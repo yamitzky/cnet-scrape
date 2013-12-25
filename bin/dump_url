@@ -1,0 +1,50 @@
+#!/usr/bin/ruby
+
+require "open-uri"
+require "nokogiri"
+require "uri"
+require "sqlite3"
+
+def parse_time(str)
+  year = str.slice(0..3).to_i
+  month = str.slice(4..5).to_i
+  day = str.slice(6..7).to_i
+  DateTime.new year, month, day
+end
+
+db_path = File.expand_path "../../tmp/cnet.db", __FILE__
+db = SQLite3::Database.new db_path
+
+url = "http://news.cnet.com/8324-12_3-0.html"
+months_html = Nokogiri::HTML(open(url))
+months_html.css("a").each do |month_el|
+  if month_el.text == "Site Index"
+    next
+  end
+  if month_el.text.slice(-4, 4).to_i > 2008
+    next
+  end
+
+  url = URI.join("http://news.cnet.com/", month_el.attr("href"))
+  parts_html = Nokogiri::HTML(open(url))
+
+  parts_html.css("a").each do |part_el|
+    url = URI.join("http://news.cnet.com/", part_el.attr("href"))
+    html = Nokogiri::HTML(open(url))
+
+    queries = url.query.split("&").map{|pair| pair.split("=")}
+    queries = Hash[*queries.flatten]
+    time = parse_time(queries["begin"])
+
+    html.css("a").each do |news_el|
+      begin
+        url = URI.join("http://news.cnet.com/", news_el.attr("href"))
+      rescue URI::InvalidURIError => e
+        next
+      end
+      db.execute("INSERT OR IGNORE INTO pages VALUES(?, ?, ?)",
+                 url.to_s, nil, time.strftime("%Y-%m-%d %T"))
+      puts url
+    end
+  end
+end
