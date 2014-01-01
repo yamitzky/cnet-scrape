@@ -46,5 +46,6 @@ months_html.css("a").each do |month_el|
                  url.to_s, nil, time.strftime("%Y-%m-%d %T"))
       puts url
     end
+    sleep 3
   end
 end
